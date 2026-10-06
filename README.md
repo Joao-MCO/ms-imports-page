@@ -1,4 +1,4 @@
-# MS Imports — iStore
+# MS Imports
 
 Sistema de gestão de vendas e inventário para loja de importados. Inclui PDV/lançamento de pedidos, controle de estoque, cadastros de produtos, clientes e usuários, e um dashboard com métricas e gráficos.
 
