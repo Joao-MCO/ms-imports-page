@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,7 +15,6 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/orders";
   const [error, setError] = useState<string | null>(null);
@@ -44,8 +43,7 @@ function LoginForm() {
     if (result?.error) {
       setError("Email ou senha inválidos");
     } else {
-      router.push(callbackUrl);
-      router.refresh();
+      window.location.assign(callbackUrl);
     }
   };
 
