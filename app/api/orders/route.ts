@@ -30,6 +30,10 @@ export async function GET(request: NextRequest) {
 
     if (query.status && query.status !== "ALL") {
       filter.status = query.status;
+    } else {
+      filter.status = {
+        $ne: "DISCARDED"
+      }
     }
 
     if (query.paymentMethod && query.paymentMethod !== "ALL") {
