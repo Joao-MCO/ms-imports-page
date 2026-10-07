@@ -16,26 +16,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new CredentialsSignin();
         }
 
-        await connectDB();
+        try {
+          await connectDB();
 
-        const user = await User.findOne({ email: credentials.email, deletedAt: null }).select("+password");
+          const user = await User.findOne({ email: credentials.email, deletedAt: null }).select("+password");
 
-        if (!user) {
+          if (!user) {
+            throw new CredentialsSignin();
+          }
+
+          const isValid = await user.comparePassword(credentials.password as string);
+
+          if (!isValid) {
+            throw new CredentialsSignin();
+          }
+
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          };
+        } catch (e) {
+          if (!(e instanceof CredentialsSignin)) {
+            console.error("[authorize] login failed:", e);
+          }
           throw new CredentialsSignin();
         }
-
-        const isValid = await user.comparePassword(credentials.password as string);
-
-        if (!isValid) {
-          throw new CredentialsSignin();
-        }
-
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        };
       },
     }),
   ],
