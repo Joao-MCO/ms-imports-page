@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
@@ -13,7 +13,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email e senha são obrigatórios");
+          throw new CredentialsSignin();
         }
 
         await connectDB();
@@ -21,13 +21,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const user = await User.findOne({ email: credentials.email, deletedAt: null }).select("+password");
 
         if (!user) {
-          throw new Error("Usuário não encontrado");
+          throw new CredentialsSignin();
         }
 
         const isValid = await user.comparePassword(credentials.password as string);
 
         if (!isValid) {
-          throw new Error("Senha incorreta");
+          throw new CredentialsSignin();
         }
 
         return {
