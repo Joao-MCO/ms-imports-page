@@ -22,7 +22,9 @@ async function connectDB(): Promise<typeof import("mongoose")> {
 
     const uri = process.env.MONGODB_URI!;
     const dbName = process.env.MONGODB_DATABASE;
-    const connectionString = dbName ? `${uri}${dbName.includes("/") ? "" : "/"}${dbName}` : uri;
+    const sep =
+      dbName && !uri.endsWith("/") && !dbName.startsWith("/") ? "/" : "";
+    const connectionString = dbName ? `${uri}${sep}${dbName}` : uri;
 
     mongoosePromise = mongoose.connect(connectionString, opts).then((m) => {
       mongooseConn = m;
